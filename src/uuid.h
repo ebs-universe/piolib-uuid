@@ -113,15 +113,6 @@
 
 typedef union UUID_t{
     uint8_t b[16];
-    struct UUID_STRUCTURE{
-        uint32_t time_low;
-        uint16_t time_mid;
-        uint16_t time_hi_and_version;
-        uint8_t  clk_seq_hi_res;
-        uint8_t  clk_seq_low;
-        uint16_t node_low;
-        uint32_t node_high;
-    }structure;
 }uuid_t;
 
 #define UUID_SUPPORT_v1     0
@@ -134,6 +125,8 @@ typedef union UUID_t{
 uint16_t uuid_init(uint16_t ucdm_next_address);
 
 void uuid_clear(uuid_t * out);
+
+void uuid_sprintf(char * bufp, uuid_t * uuid);
 
 #if UUID_SUPPORT_v1
     extern uuid_t mac_uuid;
@@ -151,5 +144,5 @@ void uuid_clear(uuid_t * out);
 #if UUID_SUPPORT_v5
     void uuid5(uuid_t * out, uuid_t * ns, uint8_t * name_p, uint8_t len);
 #endif
-
+    
 #endif

@@ -25,6 +25,8 @@
  */
 
 #include "uuid.h"
+#include <string.h>
+#include <printf/printf.h>
 
 #if UUID_SUPPORT_v1
     #include <ucdm/ucdm.h>
@@ -39,7 +41,6 @@
     #include <crypto/sha1/sha1.h>
 #endif
 
-#include <string.h>
 
 uint8_t hashstage[64];
 md5_ctx_t md5ctx;
@@ -61,21 +62,30 @@ void uuid_clear(uuid_t * out)
     memset((void *) out, 0, sizeof(uuid_t));
 }
 
+void uuid_sprintf(char * bufp, uuid_t * uuid){
+    for (uint8_t i=0; i<16; i++){
+        sprintf(bufp, "%x", uuid->b[i]);
+        bufp += 2;
+        if (i == 3 || i == 5 || i == 7 || i == 9){
+            *(bufp++) = '-';
+        }
+    }
+}
 
-static void uuid_setversion(uuid_t * out, uint16_t ver_m);
+static void uuid_setversion(uuid_t * out, uint8_t ver_m);
 
-static void uuid_setversion(uuid_t * out, uint16_t ver_m){
-    out->structure.clk_seq_hi_res &= ~0xC0;
-    out->structure.clk_seq_hi_res |= 0x80;
-    out->structure.time_hi_and_version &= ~0xF000;
-    out->structure.time_hi_and_version |= ver_m;
+static void uuid_setversion(uuid_t * out, uint8_t ver_m){
+    out->b[8] &= ~0xC0;
+    out->b[8] |= 0x80;
+    out->b[6] &= ~0xF0;
+    out->b[6] |= ver_m;
 }
 
 #if UUID_SUPPORT_v1
 uint16_t uuid_clk_seq;
 
 void uuid1(uuid_t * out){
-    uuid_setversion(out, (1<<12));
+    uuid_setversion(out, (1<<4));
 }
 #endif
 
@@ -110,13 +120,13 @@ void uuid3(uuid_t * out, uuid_t * ns, uint8_t * name_p, uint8_t len){
         }
     }
     md5_ctx2hash((md5_hash_t *)&(out->b), &md5ctx);
-    uuid_setversion(out, (3<<12));
+    uuid_setversion(out, (3<<4));
 }
 #endif 
 
 #if UUID_SUPPORT_v4
 void uuid4(uuid_t * out){
-    uuid_setversion(out, (4<<12));
+    uuid_setversion(out, (4<<4));
 }
 #endif
 
@@ -152,6 +162,6 @@ void uuid5(uuid_t * out, uuid_t * ns, uint8_t * name_p, uint8_t len){
     }
     sha1_ctx2hash(&sha1hash, &sha1ctx);
     memcpy((void *)out, (void *)(&sha1hash), 16);
-    uuid_setversion(out, (5<<12));
+    uuid_setversion(out, (5<<4));
 }
 #endif
