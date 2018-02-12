@@ -155,8 +155,8 @@ void uuid5(uuid_t * out, uuid_t * ns, uint8_t * name_p, uint8_t len){
             }
             else{
                 sha1_nextBlock(&sha1ctx, name_p);
-                name_p += MD5_BLOCK_BYTES;
-                len -= MD5_BLOCK_BYTES;
+                name_p += SHA1_BLOCK_BYTES;
+                len -= SHA1_BLOCK_BYTES;
             }
         }
     }
