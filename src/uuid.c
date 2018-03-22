@@ -74,7 +74,7 @@ void uuid_clear(uuid_t * out)
 
 void uuid_sprintf(char * bufp, uuid_t * uuid){
     for (uint8_t i=0; i<16; i++){
-        sprintf(bufp, "%x", uuid->b[i]);
+        sprintf(bufp, "%02x", uuid->b[i]);
         bufp += 2;
         if (i == 3 || i == 5 || i == 7 || i == 9){
             *(bufp++) = '-';
