@@ -31,27 +31,36 @@
 #if UUID_SUPPORT_v1
     #include <ucdm/ucdm.h>
     #include <time/time.h>
+    void _uuid_get_host_mac(void);
+    void _uuid_get_clkseq(void);
 #endif
 
 #if UUID_SUPPORT_v3
     #include <crypto/md5/md5.h>
+    md5_ctx_t md5ctx;
 #endif
 
+#if UUID_SUPPORT_v4
+    extern uint8_t rand_byte(void);
+#endif
+    
 #if UUID_SUPPORT_v5
     #include <crypto/sha1/sha1.h>
+    sha1_ctx_t sha1ctx;
+    sha1_hash_t sha1hash;
 #endif
 
+#if UUID_SUPPORT_v5 + UUID_SUPPORT_v3 > 0
+    uint8_t hashstage[64];
+#endif
 
-uint8_t hashstage[64];
-md5_ctx_t md5ctx;
-
-sha1_ctx_t sha1ctx;
-sha1_hash_t sha1hash;
-
+    
 uint16_t uuid_init(uint16_t ucdm_next_address){
     #if UUID_SUPPORT_v1
-        ucdm_redirect_regw_ptr(ucdm_next_address, &uuid_clk_seq);
-        ucdm_next_address += 1;
+        _uuid_get_host_mac();
+        _uuid_get_clkseq();
+        //ucdm_redirect_regw_ptr(ucdm_next_address, &uuid_clk_seq);
+        //ucdm_next_address += 1;
     #endif
     return ucdm_next_address;
 }
@@ -61,6 +70,7 @@ void uuid_clear(uuid_t * out)
 {
     memset((void *) out, 0, sizeof(uuid_t));
 }
+
 
 void uuid_sprintf(char * bufp, uuid_t * uuid){
     for (uint8_t i=0; i<16; i++){
@@ -72,6 +82,7 @@ void uuid_sprintf(char * bufp, uuid_t * uuid){
     }
 }
 
+
 static void uuid_setversion(uuid_t * out, uint8_t ver_m);
 
 static void uuid_setversion(uuid_t * out, uint8_t ver_m){
@@ -81,13 +92,27 @@ static void uuid_setversion(uuid_t * out, uint8_t ver_m){
     out->b[6] |= ver_m;
 }
 
+
 #if UUID_SUPPORT_v1
+uuid_t uuid_host_mac;
 uint16_t uuid_clk_seq;
+
+void _uuid_get_host_mac(void){
+    // Construct host mac uuid from host ID and a core namespace.
+    ;
+}
+
+void _uuid_get_clkseq(void){
+    // Construct clkseq using entropy or by incrementing a preexisting clkseq 
+    //from non-volatile storage
+    ;
+}
 
 void uuid1(uuid_t * out){
     uuid_setversion(out, (1<<4));
 }
 #endif
+
 
 #if UUID_SUPPORT_v3
 void uuid3(uuid_t * out, uuid_t * ns, uint8_t * name_p, uint8_t len){
@@ -124,11 +149,17 @@ void uuid3(uuid_t * out, uuid_t * ns, uint8_t * name_p, uint8_t len){
 }
 #endif 
 
+
 #if UUID_SUPPORT_v4
 void uuid4(uuid_t * out){
+    uint8_t i;
+    for (i = 0; i < 16; i++){
+        out->b[i] = rand_byte();
+    }
     uuid_setversion(out, (4<<4));
 }
 #endif
+
 
 #if UUID_SUPPORT_v5
 void uuid5(uuid_t * out, uuid_t * ns, uint8_t * name_p, uint8_t len){
