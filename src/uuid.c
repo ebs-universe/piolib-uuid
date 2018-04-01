@@ -28,41 +28,37 @@
 #include <string.h>
 #include <printf/printf.h>
 
-#if UUID_SUPPORT_v1
-    #include <ucdm/ucdm.h>
+#if UUID_SUPPORT_v1 + UUID_SUPPORT_v6 > 0
     #include <time/time.h>
-    void _uuid_get_host_mac(void);
-    void _uuid_get_clkseq(void);
+    static uuid_t uuid1_template;
+    static struct UUID1_STATE{
+        uint64_t ts_last;
+        uint16_t uuids_this_tick;
+    }uuid1_state = {0,0};
+    static void _uuid1_template_init(void);
 #endif
 
 #if UUID_SUPPORT_v3
     #include <crypto/md5/md5.h>
-    md5_ctx_t md5ctx;
-#endif
-
-#if UUID_SUPPORT_v4
-    extern uint8_t rand_byte(void);
+    static md5_ctx_t md5ctx;
 #endif
     
 #if UUID_SUPPORT_v5
     #include <crypto/sha1/sha1.h>
-    sha1_ctx_t sha1ctx;
-    sha1_hash_t sha1hash;
+    static sha1_ctx_t sha1ctx;
+    static sha1_hash_t sha1hash;
 #endif
 
 #if UUID_SUPPORT_v5 + UUID_SUPPORT_v3 > 0
-    uint8_t hashstage[64];
+    static uint8_t hashstage[64];
 #endif
 
     
-uint16_t uuid_init(uint16_t ucdm_next_address){
-    #if UUID_SUPPORT_v1
-        _uuid_get_host_mac();
-        _uuid_get_clkseq();
-        //ucdm_redirect_regw_ptr(ucdm_next_address, &uuid_clk_seq);
-        //ucdm_next_address += 1;
+void uuid_init(void){
+    #if UUID_SUPPORT_v1 + UUID_SUPPORT_v6 > 0
+        _uuid1_template_init();
     #endif
-    return ucdm_next_address;
+    return;
 }
 
 
@@ -93,28 +89,87 @@ static void uuid_setversion(uuid_t * out, uint8_t ver_m){
 }
 
 
-#if UUID_SUPPORT_v1
-uuid_t uuid_host_mac;
-uint16_t uuid_clk_seq;
+#if UUID_SUPPORT_v1 + UUID_SUPPORT_v6 > 0
 
-void _uuid_get_host_mac(void){
-    // Construct host mac uuid from host ID and a core namespace.
-    ;
+static void _uuid1_template_init(void){
+    // Write node
+    id_read(6, (void *)(&uuid1_template.s.node[0]));
+    // Set multicast bit
+    uuid1_template.s.node[5] |= (uuid1_template.s.node[5] & 0x01);
+    // Write clkseq
+    uuid1_template.s.clock_seq_low = rand_byte();
+    uuid1_template.s.clock_seq_hi_and_reserved = rand_byte();
 }
 
-void _uuid_get_clkseq(void){
-    // Construct clkseq using entropy or by incrementing a preexisting clkseq 
-    //from non-volatile storage
-    ;
+static void _uuid1(uuid_t * out, void (*ts_writer)(uuid_t *, uint8_t *)){
+    memcpy(out, &uuid1_template, sizeof(uuid_t));
+    // Write time
+    tm_system_t stime;
+    union TS{
+        uint64_t i;
+        uint8_t b[8];
+    }ts;
+    tm_current_time(&stime);
+    ts.i = stime.seconds * 10000000 + stime.frac * 10000 + UUID_EPOCH_OFFSET;
+    if (ts.i == uuid1_state.ts_last){
+        uuid1_state.uuids_this_tick++;
+    }
+    else{
+        uuid1_state.ts_last = ts.i;
+        uuid1_state.uuids_this_tick = 0;
+    }
+    ts.i += uuid1_state.uuids_this_tick;
+    ts_writer(out, &(ts.b[0]));
+}
+
+#endif
+
+
+#if UUID_SUPPORT_v1
+
+static void _uuid1_ts_writer1(uuid_t * out, uint8_t * tsb){
+    // time_low
+    out->b[0] = tsb[3];
+    out->b[1] = tsb[2];
+    out->b[2] = tsb[1];
+    out->b[3] = tsb[0];
+    // time_mid
+    out->b[4] = tsb[5];
+    out->b[5] = tsb[4];
+    // time_high
+    out->b[6] = tsb[7];
+    out->b[7] = tsb[6];
+    uuid_setversion(out, (1<<4));
 }
 
 void uuid1(uuid_t * out){
-    uuid_setversion(out, (1<<4));
+    _uuid1(out, &_uuid1_ts_writer1);
 }
+
+#endif
+
+
+#if UUID_SUPPORT_v6
+
+static void _uuid1_ts_writer6(uuid_t * out, uint8_t * tsb){
+    // time_low
+    for (uint8_t i=0, j=7; i<6; i++, j--){
+        out->b[i] = (tsb[j] << 4) | ((tsb[j-1] & 0xF0) >> 4);
+    }
+    out->b[6] = tsb[1] & 0x0F;
+    out->b[7] = tsb[0];
+    uuid_setversion(out, (6<<4));
+}
+
+void uuid6(uuid_t * out){
+    _uuid1(out, &_uuid1_ts_writer6);
+}
+
 #endif
 
 
 #if UUID_SUPPORT_v3
+
 void uuid3(uuid_t * out, uuid_t * ns, uint8_t * name_p, uint8_t len){
     md5_init(&md5ctx);
     uint8_t t;
@@ -147,10 +202,12 @@ void uuid3(uuid_t * out, uuid_t * ns, uint8_t * name_p, uint8_t len){
     md5_ctx2hash((md5_hash_t *)&(out->b), &md5ctx);
     uuid_setversion(out, (3<<4));
 }
+
 #endif 
 
 
 #if UUID_SUPPORT_v4
+
 void uuid4(uuid_t * out){
     uint8_t i;
     for (i = 0; i < 16; i++){
@@ -158,10 +215,12 @@ void uuid4(uuid_t * out){
     }
     uuid_setversion(out, (4<<4));
 }
+
 #endif
 
 
 #if UUID_SUPPORT_v5
+
 void uuid5(uuid_t * out, uuid_t * ns, uint8_t * name_p, uint8_t len){
     sha1_init(&sha1ctx);
     uint8_t t;
@@ -195,4 +254,5 @@ void uuid5(uuid_t * out, uuid_t * ns, uint8_t * name_p, uint8_t len){
     memcpy((void *)out, (void *)(&sha1hash), 16);
     uuid_setversion(out, (5<<4));
 }
+
 #endif
