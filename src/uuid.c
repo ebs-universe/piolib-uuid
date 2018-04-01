@@ -58,9 +58,9 @@ void uuid_init(void){
 }
 
 
-void uuid_clear(uuid_t * out)
+void uuid_clear(uuid_t * uuid)
 {
-    memset((void *) out, 0, sizeof(uuid_t));
+    memset((void *) uuid, 0, sizeof(uuid_t));
 }
 
 
@@ -103,7 +103,7 @@ static void _uuid1(uuid_t * out, void (*ts_writer)(uuid_t *, uint8_t *)){
         uint8_t b[8];
     }ts;
     tm_current_time(&stime);
-    ts.i = stime.seconds * 10000000 + stime.frac * 10000 + UUID_EPOCH_OFFSET;
+    ts.i = stime.seconds * 10000000 + stime.frac * TIME_TICKS_PER_SECOND * 10 + UUID_EPOCH_OFFSET;
     if (ts.i == uuid1_state.ts_last){
         uuid1_state.uuids_this_tick++;
     }
