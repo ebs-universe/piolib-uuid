@@ -28,36 +28,32 @@
 #include <string.h>
 #include <printf/printf.h>
 
-#if UUID_SUPPORT_v1 + UUID_SUPPORT_v6 > 0
-    #include <time/time.h>
-    static uuid_t uuid1_template;
-    static struct UUID1_STATE{
-        uint64_t ts_last;
-        uint16_t uuids_this_tick;
-    }uuid1_state = {0,0};
-    static void _uuid1_template_init(void);
-#endif
 
-#if UUID_SUPPORT_v3
-    #include <crypto/md5/md5.h>
-    static md5_ctx_t md5ctx;
-#endif
+// v1 or v6 
+#include <time/time.h>
+static uuid_t uuid1_template;
+static struct UUID1_STATE{
+    uint64_t ts_last;
+    uint16_t uuids_this_tick;
+}uuid1_state = {0,0};
+static void _uuid1_template_init(void);
+
+
+// v3
+#include <crypto/md5/md5.h>
+static md5_ctx_t md5ctx;
     
-#if UUID_SUPPORT_v5
-    #include <crypto/sha1/sha1.h>
-    static sha1_ctx_t sha1ctx;
-    static sha1_hash_t sha1hash;
-#endif
+// v5
+#include <crypto/sha1/sha1.h>
+static sha1_ctx_t sha1ctx;
+static sha1_hash_t sha1hash;
 
-#if UUID_SUPPORT_v5 + UUID_SUPPORT_v3 > 0
-    static uint8_t hashstage[64];
-#endif
+// v3 or v5
+static uint8_t hashstage[64];
 
-    
+
 void uuid_init(void){
-    #if UUID_SUPPORT_v1 + UUID_SUPPORT_v6 > 0
-        _uuid1_template_init();
-    #endif
+    _uuid1_template_init();
     return;
 }
 
@@ -79,17 +75,13 @@ void uuid_sprintf(char * bufp, uuid_t * uuid){
 }
 
 
-static void uuid_setversion(uuid_t * out, uint8_t ver_m);
-
-static void uuid_setversion(uuid_t * out, uint8_t ver_m){
+static void _uuid_setversion(uuid_t * out, uint8_t ver_m){
     out->b[8] &= ~0xC0;
     out->b[8] |= 0x80;
     out->b[6] &= ~0xF0;
     out->b[6] |= ver_m;
 }
 
-
-#if UUID_SUPPORT_v1 + UUID_SUPPORT_v6 > 0
 
 static void _uuid1_template_init(void){
     // Write node
@@ -100,6 +92,7 @@ static void _uuid1_template_init(void){
     uuid1_template.s.clock_seq_low = rand_byte();
     uuid1_template.s.clock_seq_hi_and_reserved = rand_byte();
 }
+
 
 static void _uuid1(uuid_t * out, void (*ts_writer)(uuid_t *, uint8_t *)){
     memcpy(out, &uuid1_template, sizeof(uuid_t));
@@ -122,10 +115,6 @@ static void _uuid1(uuid_t * out, void (*ts_writer)(uuid_t *, uint8_t *)){
     ts_writer(out, &(ts.b[0]));
 }
 
-#endif
-
-
-#if UUID_SUPPORT_v1
 
 static void _uuid1_ts_writer1(uuid_t * out, uint8_t * tsb){
     // time_low
@@ -139,17 +128,13 @@ static void _uuid1_ts_writer1(uuid_t * out, uint8_t * tsb){
     // time_high
     out->b[6] = tsb[7];
     out->b[7] = tsb[6];
-    uuid_setversion(out, (1<<4));
+    _uuid_setversion(out, (1<<4));
 }
 
 void uuid1(uuid_t * out){
     _uuid1(out, &_uuid1_ts_writer1);
 }
 
-#endif
-
-
-#if UUID_SUPPORT_v6
 
 static void _uuid1_ts_writer6(uuid_t * out, uint8_t * tsb){
     // time_low
@@ -158,17 +143,13 @@ static void _uuid1_ts_writer6(uuid_t * out, uint8_t * tsb){
     }
     out->b[6] = tsb[1] & 0x0F;
     out->b[7] = tsb[0];
-    uuid_setversion(out, (6<<4));
+    _uuid_setversion(out, (6<<4));
 }
 
 void uuid6(uuid_t * out){
     _uuid1(out, &_uuid1_ts_writer6);
 }
 
-#endif
-
-
-#if UUID_SUPPORT_v3
 
 void uuid3(uuid_t * out, uuid_t * ns, uint8_t * name_p, uint8_t len){
     md5_init(&md5ctx);
@@ -200,26 +181,18 @@ void uuid3(uuid_t * out, uuid_t * ns, uint8_t * name_p, uint8_t len){
         }
     }
     md5_ctx2hash((md5_hash_t *)&(out->b), &md5ctx);
-    uuid_setversion(out, (3<<4));
+    _uuid_setversion(out, (3<<4));
 }
 
-#endif 
-
-
-#if UUID_SUPPORT_v4
 
 void uuid4(uuid_t * out){
     uint8_t i;
     for (i = 0; i < 16; i++){
         out->b[i] = rand_byte();
     }
-    uuid_setversion(out, (4<<4));
+    _uuid_setversion(out, (4<<4));
 }
 
-#endif
-
-
-#if UUID_SUPPORT_v5
 
 void uuid5(uuid_t * out, uuid_t * ns, uint8_t * name_p, uint8_t len){
     sha1_init(&sha1ctx);
@@ -252,7 +225,5 @@ void uuid5(uuid_t * out, uuid_t * ns, uint8_t * name_p, uint8_t len){
     }
     sha1_ctx2hash(&sha1hash, &sha1ctx);
     memcpy((void *)out, (void *)(&sha1hash), 16);
-    uuid_setversion(out, (5<<4));
+    _uuid_setversion(out, (5<<4));
 }
-
-#endif

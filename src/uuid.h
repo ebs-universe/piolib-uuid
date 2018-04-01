@@ -51,7 +51,7 @@
  * which should be available at link time. Within the EBS ecosystem, this 
  * function would typically be available from sys/rand.h, and would depend on 
  * a PRNG seeded by a hardware entropy source. For better compliance with 
- * RFC4122, the clock sequence should be written to some form of non 
+ * RFC4122, the clock sequence should be written to some form of non-
  * volatile storage. Such an implementation is left to the application.
  * 
  * @see <https://github.com/chintal/ebs-lib-time>
@@ -117,6 +117,14 @@
 
 #include<stdint.h>
 
+#define UUID_SUPPORT_v1     1
+#define UUID_SUPPORT_v2     0
+#define UUID_SUPPORT_v3     1
+#define UUID_SUPPORT_v4     1
+#define UUID_SUPPORT_v5     1
+#define UUID_SUPPORT_v6     1
+
+#define UUID_EPOCH_OFFSET (uint64_t)(0x01B21DD213814000)
 
 typedef union UUID_t{
     struct {
@@ -130,47 +138,17 @@ typedef union UUID_t{
     uint8_t b[16];
 }uuid_t;
 
-
-#define UUID_SUPPORT_v1     1
-#define UUID_SUPPORT_v2     0
-#define UUID_SUPPORT_v3     1
-#define UUID_SUPPORT_v4     1
-#define UUID_SUPPORT_v5     1
-#define UUID_SUPPORT_v6     1
+extern uint8_t id_read(uint8_t maxlen, void * buffer);    
+extern uint8_t rand_byte(void);
 
 void uuid_init(void);
-
 void uuid_clear(uuid_t * out);
-
 void uuid_sprintf(char * bufp, uuid_t * uuid);
 
-#if UUID_SUPPORT_v1
-    void uuid1(uuid_t * out);
-#endif
+void uuid1(uuid_t * out);
+void uuid3(uuid_t * out, uuid_t * ns, uint8_t * name_p, uint8_t len);
+void uuid4(uuid_t * out);
+void uuid5(uuid_t * out, uuid_t * ns, uint8_t * name_p, uint8_t len);
+void uuid6(uuid_t * out);
 
-#if UUID_SUPPORT_v3
-    void uuid3(uuid_t * out, uuid_t * ns, uint8_t * name_p, uint8_t len);
-#endif
-
-#if UUID_SUPPORT_v4    
-    void uuid4(uuid_t * out);
-#endif
-
-#if UUID_SUPPORT_v5
-    void uuid5(uuid_t * out, uuid_t * ns, uint8_t * name_p, uint8_t len);
-#endif
-    
-#if UUID_SUPPORT_v6
-    void uuid6(uuid_t * out);
-#endif
-
-#if UUID_SUPPORT_v1 + UUID_SUPPORT_v6 > 0
-    #define UUID_EPOCH_OFFSET (uint64_t)(0x01B21DD213814000)
-    extern uint8_t id_read(uint8_t maxlen, void * buffer);    
-#endif
-    
-#if UUID_SUPPORT_v4 + UUID_SUPPORT_v1 > 0
-    extern uint8_t rand_byte(void);
-#endif
-    
 #endif
