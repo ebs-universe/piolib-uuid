@@ -149,6 +149,12 @@
   */
 #define UUID_EPOCH_OFFSET (uint64_t)(0x01B21DD213814000)
 
+/** Length of the binary representation of a UUID in bytes */
+#define UUID_LENGTH_BINARY  16
+
+/** Length of the string representation of a UUID in bytes */
+#define UUID_LENGTH_STRING  37
+
 /**
  * @brief UUID Container Type
  */
@@ -266,7 +272,8 @@ void uuid6(uuid_t * out);
  * 
  * Print a UUID into a string, formatted as per the standard format for UUIDs.
  * This function should be provided a buffer that is long enough to contain a
- * UUID string, i.e., 36 characters.
+ * UUID string, i.e., 37 characters. The generated string will be null 
+ * terminated. 
  * 
  * The format of the output is as per RFC4122 : 
  * 
