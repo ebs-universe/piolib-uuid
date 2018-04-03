@@ -129,6 +129,10 @@
 #ifndef UUID_H
 #define UUID_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include<stdint.h>
 #include "config.h"
 
@@ -306,5 +310,9 @@ void uuid_sprintf(char * bufp, uuid_t * uuid);
  */
 void uuid_clear(uuid_t * uuid);
 /**@}*/ 
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
