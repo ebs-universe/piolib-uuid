@@ -1,6 +1,6 @@
 /* 
  *   Copyright (c)
- *     (c) 2015-2018 Chintalagiri Shashank, Quazar Technologies Pvt. Ltd.
+ *     (c) 2016-2018 Chintalagiri Shashank, Quazar Technologies Pvt. Ltd.
  *   
  *   This file is part of
  *   Embedded bootstraps : uuid library
@@ -26,12 +26,12 @@
  * This library provides UUID generation functions, to generate UUIDs 
  * compliant with RFC4122.
  * 
- * Version 1 : Date-time and MAC address
- * Version 2 : DCE security                 (no support planned)
- * Version 3 : MD5 Hash and Namespace
- * Version 4 : Random           
- * Version 5 : SHA1 Hash and Namespace
- * Version 6 : Non-standard variant
+ *  - Version 1 : Date-time and MAC address
+ *  - Version 2 : DCE security                 (no support planned)
+ *  - Version 3 : MD5 Hash and Namespace
+ *  - Version 4 : Random           
+ *  - Version 5 : SHA1 Hash and Namespace
+ *  - Version 6 : Non-standard variant
  * 
  * Note that the bulk of this library is NOT re-entrant. It is the 
  * application's responsibility to ensure that a uuid generation function 
@@ -130,6 +130,7 @@
 #define UUID_H
 
 #include<stdint.h>
+#include "config.h"
 
 /**
  * @name UUID Version support status
@@ -143,16 +144,16 @@
 #define UUID_SUPPORT_v6     1
 /**@}*/ 
 
-/** Epoch offset between the UNIX epoch (00:00:00 UTC, 1 January 1970) and 
-  * UUID epoch (00:00:00.00 UTC, 15 October 1582) in units of the UUID 
+/** @brief Epoch offset between the UNIX epoch (00:00:00 UTC, 1 January 1970) 
+  * and UUID epoch (00:00:00.00 UTC, 15 October 1582) in units of the UUID 
   * timestamp (100ns). This number is taken from page 28 of RFC4122.
   */
 #define UUID_EPOCH_OFFSET (uint64_t)(0x01B21DD213814000)
 
-/** Length of the binary representation of a UUID in bytes */
+/** @brief Length of the binary representation of a UUID in bytes */
 #define UUID_LENGTH_BINARY  16
 
-/** Length of the string representation of a UUID in bytes */
+/** @brief Length of the string representation of a UUID in bytes */
 #define UUID_LENGTH_STRING  37
 
 /**
@@ -160,12 +161,12 @@
  */
 typedef union UUID_t{
     struct {
-        uint32_t time_low;
-        uint16_t time_mid;
-        uint16_t time_hi_and_version;
-        uint8_t clock_seq_hi_and_reserved;
-        uint8_t clock_seq_low;
-        uint8_t node[6];
+        uint32_t time_low;                  /**< @brief bytes 0-3 */
+        uint16_t time_mid;                  /**< @brief bytes 4-5 */
+        uint16_t time_hi_and_version;       /**< @brief bytes 6-7 */
+        uint8_t clock_seq_hi_and_reserved;  /**< @brief byte 8 */
+        uint8_t clock_seq_low;              /**< @brief byte 9 */
+        uint8_t node[6];                    /**< @brief bytes 10-15 */
     } s;            /**< @brief UUID type as per the structure defined in RFC4122. */
     uint8_t b[16];  /**< @brief UUID type as an array of bytes. */
 }uuid_t;

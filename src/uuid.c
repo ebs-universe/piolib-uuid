@@ -1,6 +1,6 @@
 /* 
  *   Copyright (c)
- *     (c) 2015-2016 Chintalagiri Shashank, Quazar Technologies Pvt. Ltd.
+ *     (c) 2015-2018 Chintalagiri Shashank, Quazar Technologies Pvt. Ltd.
  *   
  *   This file is part of
  *   Embedded bootstraps : uuid library
@@ -50,6 +50,9 @@ static sha1_hash_t sha1hash;
 
 // v3 or v5
 static uint8_t hashstage[64];
+
+/** @brief UUID Library Version */
+static const char * const version __attribute__ ((unused)) = UUID_VERSION;
 
 
 void uuid_init(void){
