@@ -46,7 +46,7 @@
  * Date-time is utilized from the EBS time library, which must be included in 
  * the application. 
  * 
- * @warning If you intend to use version 1 or 6 UUIDs, you should ensure that 
+ * @note If you intend to use version 1 or 6 UUIDs, you should ensure that 
  * the time library is initialized, the systick timer is installed and started, 
  * and time is synchronized to real time - either from an RTC or by the Host 
  * before the v1 UUID is generated. This library does nothing to make sure 
@@ -105,7 +105,7 @@
  * CSPRNG. Some of the simpler PRBS generators may be fine for less demanding 
  * applications.
  * 
- * Note that this library does not attempt to initialize the random number
+ * @note This library does not attempt to initialize the random number 
  * generator. The application should ensure it is correctly configured and 
  * initialized before UUID v4 is generated.
  *
@@ -223,6 +223,18 @@ extern uint8_t rand_byte(void);
  * application, this function need not and should not be called. 
  */
 void uuid_init(void);
+
+/**
+ * @brief Install the UUID library descriptor to the application.
+ * 
+ * The UUID application descriptor contains the library version number and is
+ * installed to the application descriptors with the tag specified in UCDM's 
+ * descriptor header as DESCRIPTOR_TAG_LIBVERSION. 
+ * 
+ * This does not effect the functionality of the UUID library in any way.
+ */
+void uuid_install_descriptor(void);
+
 /**@}*/ 
 
 /**

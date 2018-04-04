@@ -26,8 +26,8 @@
 
 #include "uuid.h"
 #include <string.h>
+#include <ucdm/descriptor.h>
 #include <printf/printf.h>
-
 
 // v1 or v6 
 #include <time/time.h>
@@ -37,7 +37,6 @@ static struct UUID1_STATE{
     uint16_t uuids_this_tick;
 }uuid1_state = {0,0};
 static void _uuid1_template_init(void);
-
 
 // v3
 #include <crypto/md5/md5.h>
@@ -51,13 +50,19 @@ static sha1_hash_t sha1hash;
 // v3 or v5
 static uint8_t hashstage[64];
 
-/** @brief UUID Library Version */
-static const char * const version __attribute__ ((unused)) = UUID_VERSION;
+/** @brief UUID Library Version Descriptor */
+static descriptor_custom_t uuid_descriptor = {DESCRIPTOR_TAG_LIBVERSION, 
+    sizeof(UUID_VERSION), DESCRIPTOR_ACCTYPE_PTR, {UUID_VERSION}, NULL};
 
-
+    
 void uuid_init(void){
     _uuid1_template_init();
     return;
+}
+
+void uuid_install_descriptor(void)
+{
+    descriptor_install(&uuid_descriptor);
 }
 
 
