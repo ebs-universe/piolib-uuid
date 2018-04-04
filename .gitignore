@@ -2,3 +2,5 @@ avr
 msp430
 *.kdev4
 *.kate-swp
+.idea
+*.pyc
