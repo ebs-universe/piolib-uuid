@@ -13,10 +13,6 @@
 extern uint16_t *const modbus_diagnostic_register_p;
 extern uint8_t  *const modbus_exception_status_p;
 
-static inline void app_modbus_init(void){
-    modbus_init(UCDM_MODBUS_BASE_ADDRESS, MODBUS_DEFAULT_DEVICE_ADDRESS);
-}
-
 void modbus_if_init(void);
 
 uint8_t modbus_if_unhandled_rxb(void);

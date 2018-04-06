@@ -6,6 +6,7 @@
 #include "bsp/drivers/led/led.h"
 #include "sys/sys.h"
 
+#include <ucdm/ucdm.h>
 #include "test_uuid.h"
 
 volatile uint8_t rval=0;
@@ -55,11 +56,11 @@ int main(void)
         bc_init();
     #endif
     
-    app_ucdm_init();
+    ucdm_init();
     app_tm_init(UCDM_TIME_BASE_ADDRESS);
     
     #if APP_ENABLE_MODBUS == 1
-        app_modbus_init();
+        modbus_init(UCDM_MODBUS_BASE_ADDRESS, MODBUS_DEFAULT_DEVICE_ADDRESS);
         led_off(BOARD_RED_LED_SELECTOR);
         led_on(BOARD_GREEN_LED_SELECTOR);
     #endif

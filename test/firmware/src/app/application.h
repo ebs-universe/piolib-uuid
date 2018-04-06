@@ -46,7 +46,7 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include "config.h"
+#include "app/config.h"
 #include "bsp/hal/uc/types.h"
 
 #define APP_ENABLE_BCIF         1
