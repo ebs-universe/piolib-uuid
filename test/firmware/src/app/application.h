@@ -57,18 +57,11 @@
  */
 /**@{*/ 
     /**
-    * @name Modbus Interface Constants
-    */
-    /**@{*/ 
-    #define MODBUS_UART               1
-    #define MODBUS_USBCDC             2
-    /**@}*/
-    /**
     * @name Modbus Interface Configuration
     */
     /**@{*/ 
     #define APP_ENABLE_MODBUS         1
-    #define APP_MODBUSIF_TYPE         MODBUS_USBCDC
+    #define APP_MODBUSIF_TYPE         2
     #define APP_MODBUSIF_INTFNUM      1
     #define APP_MODBUSIF_RXCHUNKSIZE  4
     #define APP_MODBUSIF_TXCHUNKSIZE  1

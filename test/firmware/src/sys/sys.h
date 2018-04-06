@@ -54,7 +54,6 @@
 #ifndef SUBSYSTEMS_H
 #define SUBSYSTEMS_H
 
-#include "modbus.h"
 #include "time.h"
 #include "rand.h"
 #include "bciface.h"

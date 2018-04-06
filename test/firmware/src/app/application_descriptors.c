@@ -3,6 +3,8 @@
 #include "application.h"
 #include "application_descriptors.h"
 #include <ucdm/descriptors.h>
+#include <uuid/uuid.h>
+#include "sys/modbus/modbus.h"
 #include "bsp/hal/uc/id.h"
 
 
@@ -30,4 +32,6 @@ descriptor_custom_t descriptor_mac = {0x00, 8, DESCRIPTOR_ACCTYPE_RFUNC, {&id_re
 
 void application_descriptors_init(void){
     descriptor_install(&descriptor_mac);
+    modbus_install_descriptor();
+    uuid_install_descriptor();
 }

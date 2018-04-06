@@ -1,11 +1,11 @@
 
-
 #include "application.h"
 #include "application_descriptors.h"
 #include "bsp/hal/uc.h"
 #include "bsp/drivers/led/led.h"
 #include "sys/sys.h"
 
+#include "sys/modbus/modbus.h"
 #include <ucdm/ucdm.h>
 #include "test_uuid.h"
 

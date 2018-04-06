@@ -71,7 +71,6 @@ void uuid_test_init(void){
     ucdm_redirect_regw_func(UCDM_UUID_TEST_BASE_ADDRESS, &uuid_generate);
     
     // Install Descriptors
-    uuid_install_descriptor();
     descriptor_install(&cd_uuidns);
     descriptor_install(&cd_uuid1);
     descriptor_install(&cd_uuid3);
