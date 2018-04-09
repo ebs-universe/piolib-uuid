@@ -51,8 +51,8 @@ static sha1_hash_t sha1hash;
 static uint8_t hashstage[64];
 
 /** @brief UUID Library Version Descriptor */
-static descriptor_custom_t uuid_descriptor = {DESCRIPTOR_TAG_LIBVERSION, 
-    sizeof(UUID_VERSION), DESCRIPTOR_ACCTYPE_PTR, {UUID_VERSION}, NULL};
+static descriptor_custom_t uuid_descriptor = {NULL, DESCRIPTOR_TAG_LIBVERSION,
+    sizeof(UUID_VERSION), DESCRIPTOR_ACCTYPE_PTR, {UUID_VERSION}};
 
     
 void uuid_init(void){

@@ -23,12 +23,12 @@ char uuids6[UUID_LENGTH_STRING];
 
 static const char * name = "test";
 
-descriptor_custom_t cd_uuidns = {10, UUID_LENGTH_STRING, DESCRIPTOR_ACCTYPE_PTR, {&uuidsns}, NULL};
-descriptor_custom_t cd_uuid1 = {11, UUID_LENGTH_STRING, DESCRIPTOR_ACCTYPE_PTR, {&uuids1}, NULL};
-descriptor_custom_t cd_uuid3 = {13, UUID_LENGTH_STRING, DESCRIPTOR_ACCTYPE_PTR, {&uuids3}, NULL};
-descriptor_custom_t cd_uuid4 = {14, UUID_LENGTH_STRING, DESCRIPTOR_ACCTYPE_PTR, {&uuids4}, NULL};
-descriptor_custom_t cd_uuid5 = {15, UUID_LENGTH_STRING, DESCRIPTOR_ACCTYPE_PTR, {&uuids5}, NULL};
-descriptor_custom_t cd_uuid6 = {16, UUID_LENGTH_STRING, DESCRIPTOR_ACCTYPE_PTR, {&uuids6}, NULL};
+descriptor_custom_t cd_uuidns = {NULL, 10, UUID_LENGTH_STRING, DESCRIPTOR_ACCTYPE_PTR, {&uuidsns}};
+descriptor_custom_t cd_uuid1 =  {NULL, 11, UUID_LENGTH_STRING, DESCRIPTOR_ACCTYPE_PTR, {&uuids1}};
+descriptor_custom_t cd_uuid3 =  {NULL, 13, UUID_LENGTH_STRING, DESCRIPTOR_ACCTYPE_PTR, {&uuids3}};
+descriptor_custom_t cd_uuid4 =  {NULL, 14, UUID_LENGTH_STRING, DESCRIPTOR_ACCTYPE_PTR, {&uuids4}};
+descriptor_custom_t cd_uuid5 =  {NULL, 15, UUID_LENGTH_STRING, DESCRIPTOR_ACCTYPE_PTR, {&uuids5}};
+descriptor_custom_t cd_uuid6 =  {NULL, 16, UUID_LENGTH_STRING, DESCRIPTOR_ACCTYPE_PTR, {&uuids6}};
 
 static void uuid_generate(uint16_t __attribute__((unused)) addr, uint16_t ver){
     switch(ver){
