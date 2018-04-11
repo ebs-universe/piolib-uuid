@@ -47,10 +47,7 @@
 #define DMAP_MAX_REGISTERS              64
 
 #define UCDM_MODBUS_BASE_ADDRESS        0
-#define UCDM_MODBUS_DEVICE_ADDRESS      0
-
-#define UCDM_TIME_BASE_ADDRESS          1
-
+#define UCDM_TIME_BASE_ADDRESS          2
 #define UCDM_UUID_TEST_BASE_ADDRESS     15
 
 #endif
