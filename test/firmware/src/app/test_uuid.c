@@ -68,7 +68,7 @@ void uuid_test_init(void){
     }
 
     // Install Handlers
-    ucdm_redirect_regw_func(UCDM_UUID_TEST_BASE_ADDRESS, &uuid_generate);
+    ucdm_redirect_regw_func(DMAP_UUID_TEST_BASE_ADDRESS, &uuid_generate);
     
     // Install Descriptors
     descriptor_install(&cd_uuidns);

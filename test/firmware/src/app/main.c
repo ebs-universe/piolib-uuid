@@ -6,7 +6,7 @@
 #include "sys/sys.h"
 
 #include "sys/modbus/modbus.h"
-#include <ucdm/ucdm.h>
+
 #include "test_uuid.h"
 
 volatile uint8_t rval=0;
@@ -58,10 +58,10 @@ int main(void)
     #endif
     
     ucdm_init();
-    app_tm_init(UCDM_TIME_BASE_ADDRESS);
+    app_tm_init(DMAP_TIME_BASE_ADDRESS);
     
     #if APP_ENABLE_MODBUS == 1
-        modbus_init(UCDM_MODBUS_BASE_ADDRESS, MODBUS_DEFAULT_DEVICE_ADDRESS);
+        modbus_init(DMAP_MODBUS_BASE_ADDRESS, MODBUS_DEFAULT_DEVICE_ADDRESS);
         led_off(BOARD_RED_LED_SELECTOR);
         led_on(BOARD_GREEN_LED_SELECTOR);
     #endif
