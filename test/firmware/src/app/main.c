@@ -6,10 +6,7 @@
 #include "sys/sys.h"
 
 #include "sys/modbus/modbus.h"
-
 #include "test_uuid.h"
-
-volatile uint8_t rval=0;
 
 
 static void deferred_exec(void);
@@ -45,6 +42,7 @@ int main(void)
     // uC Core Initialization
     watchdog_hold();
     power_set_full();
+
     clock_set_default();
     global_interrupt_enable();
     
