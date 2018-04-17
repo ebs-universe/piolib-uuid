@@ -1,36 +1,60 @@
 
 from __future__ import print_function
-from six import iteritems
 
-from pymodbus.mei_message import ReadDeviceInformationRequest
-
-try:
-    from pymodbus_ebs import ModbusClient
-except ImportError:
-    from pymodbus.client.sync import ModbusSerialClient as ModbusClient
+from ebs.modbus.device import ModbusDevice
+from ebs.modbus.hotplug import ModbusHotplugMixin
+from ebs.ucdm.descriptor import ModbusDescriptorMixin
+from ebs.ucdm.descriptor import _parse_string
 
 
-class DummyResponse(object):
-    more_follows = 0xFF
-    next_object_id = 0
+class TestDevice(ModbusDescriptorMixin,
+                 ModbusHotplugMixin,
+                 ModbusDevice):
+    _custom_descriptor_tags = {
+        138: ('uuid_ns', _parse_string),
+        139: ('uuid1', _parse_string),
+        140: ('uuid2', _parse_string),
+        141: ('uuid3', _parse_string),
+        142: ('uuid4', _parse_string),
+        143: ('uuid5', _parse_string),
+        144: ('uuid6', _parse_string)
+    }
 
+    _modbus_address_regen = 15
+    _versions = [1, 3, 4, 5, 6]
 
-def get_descriptors(mc):
-    rr = DummyResponse
-    rval = {}
-    while rr.more_follows:
-        rq = ReadDeviceInformationRequest(unit=5, read_code=0x03,
-                                          object_id=rr.next_object_id)
-        rr = mc.execute(rq)
-        rval.update(rr.information)
-    return rval
+    def __init__(self, *args, **kwargs):
+        super(TestDevice, self).__init__(*args, **kwargs)
+        self._registry['descriptor_tags'].update(self._custom_descriptor_tags)
+
+    def regen_uuid(self, ver):
+        if ver not in self._versions:
+            raise ValueError
+        self.write_register(self._modbus_address_regen, ver)
+
+    def print_uuid(self, ver):
+        if ver not in self._versions:
+            raise ValueError
+        print('uuid{0}     : {1}'.format(
+            ver, getattr(device, 'uuid{0}'.format(ver))
+        ))
+
+    def print_uuids(self):
+        print('namespace : {0}'.format(device.uuid_ns))
+        for ver in device._versions:
+            self.print_uuid(ver)
 
 
 if __name__ == '__main__':
-    mclient = ModbusClient(method='rtu', port='/dev/ttyACM1')
-    mclient.connect()
+    device = TestDevice(5, method='rtu', port='/dev/ttyACM4')
+    device.connect()
+    device.read_descriptors()
+    device.print_uuids()
 
-    device_information = get_descriptors(mclient)
+    print("Regenerating UUIDs")
 
-    for k, v in iteritems(device_information):
-        print((k - 0x80), v)
+    for ver in device._versions:
+        device.regen_uuid(ver)
+
+    device.read_descriptors()
+    device.print_uuids()
