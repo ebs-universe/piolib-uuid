@@ -1,0 +1,25 @@
+var uuid_8h =
+[
+    [ "UUID_t", "union_u_u_i_d__t.html", "union_u_u_i_d__t" ],
+    [ "UUID_EPOCH_OFFSET", "uuid_8h.html#a75fb4e5f254223ea002591d8a0e2dc43", null ],
+    [ "UUID_LENGTH_BINARY", "uuid_8h.html#a117f09c4f57b9d8fdcda3f7f4b58c645", null ],
+    [ "UUID_LENGTH_STRING", "uuid_8h.html#a8dd36c10fc5fa1bda14916d89cd9cc15", null ],
+    [ "UUID_SUPPORT_v1", "uuid_8h.html#a8bb885cfa88141c4cdde5f8f1c4d1aa2", null ],
+    [ "UUID_SUPPORT_v2", "uuid_8h.html#a59e21e5a30acc97c518af09507eb4d81", null ],
+    [ "UUID_SUPPORT_v3", "uuid_8h.html#a04cc05c55a80ca0053067aa1c0a85688", null ],
+    [ "UUID_SUPPORT_v4", "uuid_8h.html#a343717ae63d65937fca3701bc8e8ecc1", null ],
+    [ "UUID_SUPPORT_v5", "uuid_8h.html#a00703ad44add54346b447349be2de377", null ],
+    [ "UUID_SUPPORT_v6", "uuid_8h.html#a30cbd7d699041871e52964d857f911e5", null ],
+    [ "uuid_t", "uuid_8h.html#ae1a4e01993bac93223a57edf8bf75701", null ],
+    [ "id_read", "uuid_8h.html#ad221b7809b5c93f923b2f42d6af32888", null ],
+    [ "rand_byte", "uuid_8h.html#a1dc11f7f24825bd66236ab364bb23116", null ],
+    [ "uuid1", "uuid_8h.html#a566237bde384233d9ac32b60792a90d9", null ],
+    [ "uuid3", "uuid_8h.html#ab64d9f1f5d9d3d4ed49bcc8f2e0f9ee0", null ],
+    [ "uuid4", "uuid_8h.html#ad67403c1009580f928b5bc8f3a8a0e6e", null ],
+    [ "uuid5", "uuid_8h.html#acf2065bcedda7d2db9e3d3711e51621c", null ],
+    [ "uuid6", "uuid_8h.html#aab1c400cf4001aa5280ecbde27263992", null ],
+    [ "uuid_clear", "uuid_8h.html#a82a97344a220ec07344e9b6d9a0f9191", null ],
+    [ "uuid_init", "uuid_8h.html#ae3afdb98080a940f9f65478b3cd2830e", null ],
+    [ "uuid_install_descriptor", "uuid_8h.html#a2f052ffa1603b74d8048054a41fa2de7", null ],
+    [ "uuid_sprintf", "uuid_8h.html#a2ae2dbc15b6e45b55ed702566550eb9d", null ]
+];

@@ -1,0 +1,4 @@
+<map id="uuid4" name="uuid4">
+<area shape="rect" id="node1" title="Generate a Version 4 UUID (Random)" alt="" coords="5,5,64,32"/>
+<area shape="rect" id="node2" href="$uuid_8h.html#a1dc11f7f24825bd66236ab364bb23116" title="Get one byte&#39;s worth of entropy." alt="" coords="112,5,199,32"/>
+</map>
