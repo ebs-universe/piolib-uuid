@@ -23,6 +23,11 @@
  * @file uuid.h
  * @brief Public include header for the UUID generation library.
  * 
+ * WARNING : This is completely untested following the migration to 
+ *           platformIO, pending a proxmial use case for it or free 
+ *           time and a debugger handy. While it compiles, expect 
+ *           this to not be working at this time. 
+ * 
  * This library provides UUID generation functions, to generate UUIDs 
  * compliant with RFC4122.
  * 
@@ -193,7 +198,7 @@ typedef union UUID_t{
  * it into the provided buffer. This library will ask for 6 bytes (48 bits) of
  * identification. The platform should be able to provide a 48-bit ID of 
  * sufficient quality. Within the EBS ecosystem, this function would typically 
- * be available from bsp/hal/uc/id.h
+ * be available from hal/uc/id.h
  */
 extern uint8_t id_read(uint8_t maxlen, void * buffer);    
 
@@ -203,7 +208,8 @@ extern uint8_t id_read(uint8_t maxlen, void * buffer);
  * 
  * Return exactly one byte of entropy. Within the EBS ecosystem, this function 
  * would typically be available from sys/rand.h, and would depend on a PRNG 
- * seeded by a hardware entropy source.
+ * seeded by a hardware entropy source. The rand library should already be 
+ * initialized.
  */
 extern uint8_t rand_byte(void);
 /**@}*/ 

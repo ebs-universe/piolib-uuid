@@ -28,6 +28,8 @@
 #include <string.h>
 #include <ucdm/descriptor.h>
 #include <printf/printf.h>
+#include <hal/uc/id.h>
+#include <rand/rand.h>
 
 // v1 or v6 
 #include <time/time.h>
@@ -39,11 +41,11 @@ static struct UUID1_STATE{
 static void _uuid1_template_init(void);
 
 // v3
-#include <crypto/md5/md5.h>
+#include <cryptolib/md5/md5.h>
 static md5_ctx_t md5ctx;
     
 // v5
-#include <crypto/sha1/sha1.h>
+#include <cryptolib/sha1/sha1.h>
 static sha1_ctx_t sha1ctx;
 static sha1_hash_t sha1hash;
 
